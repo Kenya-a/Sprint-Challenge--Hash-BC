@@ -8,7 +8,6 @@ from uuid import uuid4
 from timeit import default_timer as timer
 
 import random
-import json
 
 
 def proof_of_work(last_proof):
@@ -25,18 +24,14 @@ def proof_of_work(last_proof):
 
     print("Searching for next proof")
     proof = 0
-
-    guess = f'{json.dumps(last_proof, sort_keys=True)}'.encode
-    guess_hash = hashlib.sha256(guess)
-    hex_hash = guess_hash.hexdigest()
-    while valid_proof(hex_hash, proof) is False:
+    while valid_proof(last_proof, proof) is False:
         proof += 1
 
     print("Proof found: " + str(proof) + " in " + str(timer() - start))
     return proof
 
 
-def valid_proof(last_hash, proof):
+def valid_proof(last_proof, proof):
     """
     Validates the Proof:  Multi-ouroborus:  Do the last six characters of
     the hash of the last proof match the first six characters of the hash
@@ -45,10 +40,10 @@ def valid_proof(last_hash, proof):
     IE:  last_hash: ...AE9123456, new hash 123456E88...
     """
 
-    guess = f'{proof}'.encode()
-    guess_hash = hashlib.sha256(guess)
-    hex_hash = guess_hash.hexdigest()
-    return hex_hash[:1] == last_hash[:1]
+    last_hash = hashlib.sha256(str(last_proof).encode()).hexdigest()
+    guess = hashlib.sha256(str(proof).encode()).hexdigest()
+    return guess[:6] == last_hash[-6:]
+
 
 
 if __name__ == '__main__':
@@ -72,21 +67,17 @@ if __name__ == '__main__':
     # Run forever until interrupted
     while True:
         # Get the last proof from the server
-        try: 
-            r = requests.get(url=node + "/last_proof")
-            data = r.json()
-            new_proof = proof_of_work(data.get('proof'))
+        r = requests.get(url=node + "/last_proof")
+        data = r.json()
+        new_proof = proof_of_work(data.get('proof'))
 
-            post_data = {"proof": new_proof,
-                         "id": id}
+        post_data = {"proof": new_proof,
+                     "id": id}
 
-            r = requests.post(url=node + "/mine", json=post_data)
-            data = r.json()
-            if data.get('message') == 'New Block Forged':
-                coins_mined += 1
-                print("Total coins mined: " + str(coins_mined))
-            else:
-                print(data.get('message'))
-        except:
-            print('Savages!')
-            pass
+        r = requests.post(url=node + "/mine", json=post_data)
+        data = r.json()
+        if data.get('message') == 'New Block Forged':
+            coins_mined += 1
+            print("Total coins mined: " + str(coins_mined))
+        else:
+            print(data.get('message'))

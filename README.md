@@ -22,15 +22,33 @@ This sprint challenge is divided up into three parts:  Hash tables coding, block
 
 ## Interview Questions
 
-During your challenge, you will be pulled aside by a PM for a 5 minute interview. During this interview, you will be expected to answer the following two topics:
-
 Explain in detail the workings of a dynamic array:
-* What is the runtime complexity to access an array, add or remove from the front, and add or remove from the back?
-* What is the worse case scenario if you try to extend the storage size of a dynamic array?
+    Dynamic array expands as you add more elements.
 
-Explain how blockchain networks remain in consensus:
-* What does a node do if it gets a message from another in the network with a new block?
-* Why can't someone cheat by changing a transaction from an earlier block to give themselves coins?
+What is the runtime complexity to access an array, add or remove from the front, and add or remove from the back?
+
+    to append runtime complexity is typically O(1)
+    to delete runtime complexity is typically O(n)
+    to insert runtime complexity is typically O(n)
+
+What is the worse case scenario if you try to extend the storage size of a dynamic array?
+
+     we woule have to allocate a bigger array and copy over all of the elements from the array you have overgrow before we can finally append our item.
+
+Explain how a blockchain is structured. What are the blocks, what is the chain? How is the data organized?
+
+    Transactions are the smallest building blocks of a blockchain system. Transactions are bundled and delivered to each node in the form of a block. As new transactions are distributed throughout the network, they are independently verified and "processed" by each node
+
+    block = container of data
+    chain = cryptography/hashes
+
+Explain how proof of work functions. How does it operate. How does this protect the chain from attack. What kind of attack is possible?
+
+     Blockchain is used to confirm transactions and produce new blocks to the chain. With proof of work, miners compete against each other to complete transactions on the network. It protects the chain from attack by requiring some work from the service requester(processing time by a computer) 
+
+     Using the SHA-256 algorithm
+
+     Attacks possible: spam, denial-of-service attacks
 
 ## Project Set Up
 
